@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { WEB_DESCRIPTION, WEB_TITLE } from "./lib/constants";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Chatbot",
-  description: "Talk with chatbot",
+  title: WEB_TITLE,
+  description: WEB_DESCRIPTION,
 };
 
 export default function RootLayout({
