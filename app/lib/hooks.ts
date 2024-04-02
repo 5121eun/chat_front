@@ -7,7 +7,6 @@ export function useSocket(url: string) {
         const s = new WebSocket(url)
 
         setSocket(s)
-        console.log('use Effect')
 
         return socket?.close()
     }, []);
