@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { CHAT_BOT_DESCRIPTION, CHAT_BOT_NAME } from "../lib/constants";
 import MyMessage from "./my-message";
 import Message from "./server-message";
@@ -14,6 +14,7 @@ import { message } from "../lib/definitions";
 export default function Room() {
     const [ value, setValue ] = useState('');
     const [ messages, setMessages ] = useState<message[]>([]);
+    const divRef = useRef<HTMLDivElement>(null);
 
     const chatSocket = new WebSocket(
         'ws://'
@@ -28,6 +29,8 @@ export default function Room() {
             ...messages,
             ...eval(e.data)
         ])
+
+        scrollDown()
     }
 
     function handleClick() {
@@ -35,6 +38,16 @@ export default function Room() {
                 'message': value
         }))
         setValue('')
+
+        scrollDown()
+    }
+
+    function scrollDown() {
+        setTimeout(() => {
+            if (divRef.current) {
+                divRef.current.scrollTop = divRef.current?.scrollHeight
+            }
+        }, 200)
     }
 
     return (
@@ -62,7 +75,9 @@ export default function Room() {
                     </button>
                 </div>
             </div>
-            <div id="messages" className="flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch">
+            <div id="messages"
+                ref={divRef}
+                className="flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch">
                 {
                     messages.map((message, index) => {
                         if (message.type) {
@@ -74,7 +89,7 @@ export default function Room() {
                                 <Message key={index} message={message.value} />
                             )
                         }
-                    })
+                    })   
                 }
             </div>
             <div className="border-t-2 border-gray-200 px-4 pt-4 mb-2 sm:mb-0">
