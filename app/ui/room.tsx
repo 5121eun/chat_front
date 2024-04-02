@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CHAT_BOT_DESCRIPTION, CHAT_BOT_NAME } from "../lib/constants";
 import MyMessage from "./my-message";
 import Message from "./server-message";
@@ -9,33 +9,32 @@ import Microphone from "./svg/microphone";
 import Search from "./svg/search";
 import Send from "./svg/send";
 import { message } from "../lib/definitions";
+import { useSocket } from "../lib/hooks";
 
 
 export default function Room() {
     const [ value, setValue ] = useState('');
     const [ messages, setMessages ] = useState<message[]>([]);
+    
     const divRef = useRef<HTMLDivElement>(null);
 
-    const chatSocket = new WebSocket(
-        'ws://'
-        + '127.0.0.1:8000'
-        + '/ws/chat/'
-        + 'room'
-        + '/'
-    )
+    const socket = useSocket('ws://127.0.0.1:8000/ws/chat/room/');
 
-    chatSocket.onmessage = function(e) {
-        setMessages([
-            ...messages,
-            ...eval(e.data)
-        ])
-
-        scrollDown()
+    if (socket) {
+        socket.onmessage = function(e) {
+            console.log(messages)
+            setMessages([
+                ...messages,
+                ...eval(e.data)
+            ])
+            scrollDown()
+        }
     }
 
     function handleClick() {
-        chatSocket.send(JSON.stringify({
-                'message': value
+        
+        socket?.send(JSON.stringify({
+            'message': value
         }))
         setValue('')
 
