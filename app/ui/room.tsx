@@ -1,0 +1,107 @@
+"use client"
+
+import { useState } from "react";
+import { CHAT_BOT_DESCRIPTION, CHAT_BOT_NAME } from "../lib/constants";
+import MyMessage from "./my-message";
+import Message from "./server-message";
+import Attach from "./svg/attach";
+import Microphone from "./svg/microphone";
+import Search from "./svg/search";
+import Send from "./svg/send";
+import { message } from "../lib/definitions";
+
+
+export default function Room() {
+    const [ value, setValue ] = useState('');
+    const [ messages, setMessages ] = useState<message[]>([]);
+
+    const chatSocket = new WebSocket(
+        'ws://'
+        + '127.0.0.1:8000'
+        + '/ws/chat/'
+        + 'room'
+        + '/'
+    )
+
+    chatSocket.onmessage = function(e) {
+        setMessages([
+            ...messages,
+            ...eval(e.data)
+        ])
+    }
+
+    function handleClick() {
+        chatSocket.send(JSON.stringify({
+                'message': value
+        }))
+        setValue('')
+    }
+
+    return (
+        <div className="flex-1 p:2 sm:p-6 justify-between flex flex-col h-screen">
+            <div className="flex sm:items-center justify-between py-3 border-b-2 border-gray-200">
+                <div className="relative flex items-center space-x-4">
+                    <div className="relative">
+                        <span className="absolute text-green-500 right-0 bottom-0">
+                        <svg width="20" height="20">
+                            <circle cx="8" cy="8" r="8" fill="currentColor"></circle>
+                        </svg>
+                        </span>
+                        <img src="/robot.png" alt="" className="w-10 sm:w-16 h-10 sm:h-16 rounded-full"/>
+                    </div>
+                    <div className="flex flex-col leading-tight">
+                        <div className="text-2xl mt-1 flex items-center">
+                        <span className="text-gray-700 mr-3">{CHAT_BOT_NAME}</span>
+                        </div>
+                        <span className="text-lg text-gray-600">{CHAT_BOT_DESCRIPTION}</span>
+                    </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                    <button type="button" className="inline-flex items-center justify-center rounded-lg border h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none">
+                        <Search/>
+                    </button>
+                </div>
+            </div>
+            <div id="messages" className="flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch">
+                {
+                    messages.map((message, index) => {
+                        if (message.type) {
+                            return (
+                                <MyMessage key={index} message={message.value} />
+                            )
+                        } else {
+                            return (
+                                <Message key={index} message={message.value} />
+                            )
+                        }
+                    })
+                }
+            </div>
+            <div className="border-t-2 border-gray-200 px-4 pt-4 mb-2 sm:mb-0">
+                <div className="relative flex">
+                    <span className="absolute inset-y-0 flex items-center">
+                        <button type="button" className="inline-flex items-center justify-center rounded-full h-12 w-12 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none">
+                            <Microphone />
+                        </button>
+                    </span>
+                    <input type="text" 
+                        placeholder="Write your message!" 
+                        className="w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-12 bg-gray-200 rounded-md py-3"
+                        value={value}
+                        onChange={(e) => setValue(e.target.value)}/>
+                    <div className="absolute right-0 items-center inset-y-0 hidden sm:flex">
+                        <button type="button" className="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none">
+                            <Attach />
+                        </button>
+                        <button type="button" 
+                            className="inline-flex items-center justify-center rounded-lg px-4 py-3 transition duration-500 ease-in-out text-white bg-blue-500 hover:bg-blue-400 focus:outline-none"
+                            onClick={handleClick}>
+                            <span className="font-bold">Send</span>
+                                <Send/>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
