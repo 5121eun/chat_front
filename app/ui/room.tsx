@@ -35,7 +35,7 @@ export default function Room() {
             if (divRef.current) {
                 divRef.current.scrollTop = divRef.current?.scrollHeight
             }
-        }, 200)
+        }, 10)
     }
 
     scrollDown()
@@ -93,7 +93,12 @@ export default function Room() {
                         placeholder="Write your message!" 
                         className="w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-12 bg-gray-200 rounded-md py-3"
                         value={value}
-                        onChange={(e) => setValue(e.target.value)}/>
+                        onChange={(e) => setValue(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.code == "Enter") {
+                                handleClick()
+                            }
+                        }}/>
                     <div className="absolute right-0 items-center inset-y-0 hidden sm:flex">
                         <button type="button" className="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none">
                             <Attach />
