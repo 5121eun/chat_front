@@ -1,1 +1,1 @@
-![chatbot](https://github.com/5121eun/chat_front/assets/121006954/1646f2d2-1dec-4ebf-8e86-d46803fe3760)
+![chatbot](https://github.com/5121eun/chat_front/assets/121006954/c178d3ec-ce34-49cf-9a2e-3a98b2fe164e)
