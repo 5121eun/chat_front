@@ -11,20 +11,21 @@ export default function useSocket(url: string): [ boolean, message[], ((data: st
         const s = new WebSocket(url)
         s.onopen = () => setConnect(true)
         s.onclose = () => setConnect(false)
-        s.onmessage = (e) => setMessages(eval(e.data))
 
         socket.current = s
 
         return () => s.close()
     }, [])
 
-    const sendMessage = useCallback((value: string) => {
-        if (socket != null && socket.current != null) {
-            socket?.current.send(JSON.stringify({
-                'message': value
-            }))
-        } 
-    }, [])
+    if (socket != null && socket.current != null) {
+        socket.current.onmessage = (e) => {
+            setMessages([
+                ...messages,
+                ...eval(e.data)
+            ])
+            
+        }
+    }
 
     return [ connect, messages, socket.current?.send.bind(socket.current) ]
 }
