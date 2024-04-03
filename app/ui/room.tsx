@@ -19,13 +19,20 @@ export default function Room() {
     
     const divRef = useRef<HTMLDivElement>(null)
 
-    const [ connect, messages, sendMessage ] = useSocket('ws://127.0.0.1:8000/ws/chat/room/')
+    const [ connect, messages, setMessages, sendMessage ] = useSocket('ws://127.0.0.1:8000/ws/chat/room/')
 
     function handleClick() {
         
         sendMessage && sendMessage(JSON.stringify({
             'message': value
         }))
+        setMessages([
+            ...messages,
+            {
+                type: true,
+                value: value
+            }
+        ])
         setValue('')
         
     }

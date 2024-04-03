@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from "react"
+import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from "react"
 import { message } from "../definitions"
 
 
-export default function useSocket(url: string): [ boolean, message[], ((data: string | ArrayBufferLike | Blob | ArrayBufferView) => void) | undefined] {
+export default function useSocket(url: string): [ boolean, message[], Dispatch<SetStateAction<message[]>>, ((data: string | ArrayBufferLike | Blob | ArrayBufferView) => void) | undefined] {
     const socket = useRef<WebSocket|null>(null)
     const [ messages, setMessages ] = useState<message[]>([])
     const [ connect, setConnect ] = useState(false)
@@ -27,5 +27,5 @@ export default function useSocket(url: string): [ boolean, message[], ((data: st
         }
     }
 
-    return [ connect, messages, socket.current?.send.bind(socket.current) ]
+    return [ connect, messages, setMessages, socket.current?.send.bind(socket.current) ]
 }
