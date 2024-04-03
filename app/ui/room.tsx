@@ -8,32 +8,22 @@ import Attach from "./svg/attach"
 import Microphone from "./svg/microphone"
 import Search from "./svg/search"
 import Send from "./svg/send"
-import { message } from "../lib/definitions"
-import { useSocket } from "../lib/hooks"
+import useSocket from "../lib/hooks/socket"
+
+import clsx from "clsx"
+import Loading from "./svg/loading"
 
 
 export default function Room() {
     const [ value, setValue ] = useState('')
-    const [ messages, setMessages ] = useState<message[]>([])
     
     const divRef = useRef<HTMLDivElement>(null)
 
-    const socket = useSocket('ws://127.0.0.1:8000/ws/chat/room/')
-
-    if (socket) {
-        socket.onmessage = function(e) {
-            console.log(messages)
-            setMessages([
-                ...messages,
-                ...eval(e.data)
-            ])
-            scrollDown()
-        }
-    }
+    const [ connect, messages, sendMessage ] = useSocket('ws://127.0.0.1:8000/ws/chat/room/')
 
     function handleClick() {
         
-        socket?.send(JSON.stringify({
+        sendMessage && sendMessage(JSON.stringify({
             'message': value
         }))
         setValue('')
@@ -108,10 +98,18 @@ export default function Room() {
                             <Attach />
                         </button>
                         <button type="button" 
-                            className="inline-flex items-center justify-center rounded-lg px-4 py-3 transition duration-500 ease-in-out text-white bg-blue-500 hover:bg-blue-400 focus:outline-none"
-                            onClick={handleClick}>
-                            <span className="font-bold">Send</span>
-                                <Send/>
+                            className={clsx(
+                                "inline-flex items-center justify-center rounded-lg px-4 py-3 transition duration-500 ease-in-out text-white bg-blue-500 hover:bg-blue-400 focus:outline-none",
+                                {
+                                    "px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-900 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:outline-none focus:ring-blue-700 focus:text-blue-700": connect == false
+                                }
+                            )}
+                            onClick={handleClick}
+                            disabled={!connect}>
+                            send
+                                {
+                                    connect? <Send/> : <Loading/>
+                                }
                         </button>
                     </div>
                 </div>
