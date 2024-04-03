@@ -1,24 +1,24 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react";
-import { CHAT_BOT_DESCRIPTION, CHAT_BOT_NAME } from "../lib/constants";
-import MyMessage from "./my-message";
-import Message from "./server-message";
-import Attach from "./svg/attach";
-import Microphone from "./svg/microphone";
-import Search from "./svg/search";
-import Send from "./svg/send";
-import { message } from "../lib/definitions";
-import { useSocket } from "../lib/hooks";
+import { useRef, useState } from "react"
+import { CHAT_BOT_DESCRIPTION, CHAT_BOT_NAME } from "../lib/constants"
+import MyMessage from "./my-message"
+import Message from "./server-message"
+import Attach from "./svg/attach"
+import Microphone from "./svg/microphone"
+import Search from "./svg/search"
+import Send from "./svg/send"
+import { message } from "../lib/definitions"
+import { useSocket } from "../lib/hooks"
 
 
 export default function Room() {
-    const [ value, setValue ] = useState('');
-    const [ messages, setMessages ] = useState<message[]>([]);
+    const [ value, setValue ] = useState('')
+    const [ messages, setMessages ] = useState<message[]>([])
     
-    const divRef = useRef<HTMLDivElement>(null);
+    const divRef = useRef<HTMLDivElement>(null)
 
-    const socket = useSocket('ws://127.0.0.1:8000/ws/chat/room/');
+    const socket = useSocket('ws://127.0.0.1:8000/ws/chat/room/')
 
     if (socket) {
         socket.onmessage = function(e) {
