@@ -27,8 +27,7 @@ export default function Room() {
             'message': value
         }))
         setValue('')
-
-        scrollDown()
+        
     }
 
     function scrollDown() {
@@ -38,6 +37,8 @@ export default function Room() {
             }
         }, 200)
     }
+
+    scrollDown()
 
     return (
         <div className="flex-1 p:2 sm:p-6 justify-between flex flex-col h-full">
