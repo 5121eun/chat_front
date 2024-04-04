@@ -12,6 +12,7 @@ import useSocket from "../lib/hooks/socket"
 
 import clsx from "clsx"
 import Loading from "./svg/loading"
+import { read } from "fs"
 
 
 export default function Room() {
@@ -50,6 +51,8 @@ export default function Room() {
                         value: reader.result as string
                     }
                 ])
+                console.log(reader.result)
+                sendMessage && sendMessage(reader.result as ArrayBuffer)
            }
         }
     }
