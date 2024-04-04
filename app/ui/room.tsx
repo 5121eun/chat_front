@@ -37,6 +37,23 @@ export default function Room() {
         
     }
 
+    function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+        if (event.currentTarget.files) {
+            const file = event.currentTarget.files[0]
+            const reader = new FileReader()
+            reader.readAsDataURL(file)
+            reader.onloadend = () => {
+                setMessages([
+                    ...messages,
+                    {   
+                        type: true,
+                        value: reader.result as string
+                    }
+                ])
+           }
+        }
+    }
+
     function scrollDown() {
         setTimeout(() => {
             if (divRef.current) {
@@ -107,9 +124,10 @@ export default function Room() {
                             }
                         }}/>
                     <div className="absolute right-0 items-center inset-y-0 hidden sm:flex">
-                        <button type="button" className="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none">
+                        <label className="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none">
+                            <input type="file" className="hidden" onChange={handleFileChange} />
                             <Attach />
-                        </button>
+                        </label>
                         <button type="button" 
                             className={clsx(
                                 "inline-flex items-center justify-center rounded-lg px-4 py-3 transition duration-500 ease-in-out text-white bg-blue-500 hover:bg-blue-400 focus:outline-none",
